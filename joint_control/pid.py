@@ -18,6 +18,7 @@ import numpy as np
 from collections import deque
 from spark_agent import SparkAgent, JOINT_CMD_NAMES
 
+import time
 
 class PIDController(object):
     '''a discretized PID controller, it controls an array of servos,
@@ -35,10 +36,12 @@ class PIDController(object):
         self.e2 = np.zeros(size)
         # ADJUST PARAMETERS BELOW
         delay = 0
-        self.Kp = 0
-        self.Ki = 0
-        self.Kd = 0
+        self.Kp = 15
+        self.Ki = -0.1
+        self.Kd = 0.3
         self.y = deque(np.zeros(size), maxlen=delay + 1)
+ 
+        self.time = 0
 
     def set_delay(self, delay):
         '''
@@ -53,6 +56,53 @@ class PIDController(object):
         @return control signal
         '''
         # YOUR CODE HERE
+        #difference = sensor - (sensor - self.y.popleft())
+        #sensor = sensor + difference
+        # YOUR CODE HERE
+
+        dt = 0
+        current_time = time.time()
+        if self.time == 0:
+            dt = self.dt 
+            self.time = current_time
+        else:
+            dt = current_time - self.time
+            self.time = current_time
+
+        error = target - sensor
+        
+        """
+        first_term = (self.Kp + self.Ki*dt + self.Kd / dt) * error
+        second_term = (self.Kp + 2*self.Kd / dt) *  self.e1
+        third_term = self.Kd / dt * self.e2
+
+        self.u = self.u + first_term - second_term + third_term
+
+        self.e2 = self.e1.copy()
+        self.e1 = error.copy()
+
+        """
+
+        p_term = error 
+
+        # I_term: summed up error
+        self.e2 = self.e2 + error * dt
+        i_term = self.e2
+
+        # D_term
+        d_term = (error - self.e1) / dt
+
+        # added together
+        PID_value = (self.Kp * p_term) + (self.Ki * i_term) + (self.Kd * d_term)
+
+        # set new previous error
+        self.e1 = error
+
+        # calculated control signal
+        self.u = PID_value
+
+        prediction = sensor + PID_value
+        self.y.append(prediction)
 
         return self.u
 
