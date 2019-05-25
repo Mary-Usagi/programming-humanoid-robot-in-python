@@ -18,13 +18,14 @@ class StandingUpAgent(PostureRecognitionAgent):
 
         # YOUR CODE HERE
         if posture != 'Stand' or posture != 'StandInit':
-            if posture == 'Back':
+            if posture == 'Back' or posture =='Left':
                 self.keyframes = leftBackToStand()
                 #print "Back"
-            if posture == 'Belly':
-                self.keyframes = leftBellyToStand()
+            if posture == 'Belly' or posture == 'Right':
+                self.keyframes = rightBellyToStand()
                 #print "Belly"
-
+        else:
+            self.keyframes = ([],[],[])
 
 
 class TestStandingUpAgent(StandingUpAgent):

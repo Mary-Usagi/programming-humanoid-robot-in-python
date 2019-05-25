@@ -55,13 +55,13 @@ class AngleInterpolationAgent(PIDAgent):
         if not keyframes[0]:
             return target_joints
 
-        if self.start_time == 0 or not self.current_keyframes[1] == keyframes[1]:
+        if self.start_time == 0 or not self.current_keyframes[2] == keyframes[2]:
             self.start_time = perception.time
             self.last_time = perception.time
             self.start_joints = perception.joint
             self.current_keyframes = keyframes
             print "new keyframe"
-            
+            print  self.posture
             time_change = 0
         else:
             time_change = perception.time - self.last_time

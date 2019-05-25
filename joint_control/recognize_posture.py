@@ -11,11 +11,8 @@ from angle_interpolation import AngleInterpolationAgent
 from keyframes import *
 
 import pickle
-from os import listdir, path
+#from os import listdir, path
 import numpy as np
-
-
-
 
 class PostureRecognitionAgent(AngleInterpolationAgent):
     def __init__(self, simspark_ip='localhost',
@@ -27,7 +24,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         self.posture = 'unknown'
         # get posture_classifier        
         self.posture_classifier = pickle.load(open('robot_pose.pkl'))  # LOAD YOUR CLASSIFIER       
-        self.classes = listdir('robot_pose_data')
+        #self.classes = listdir('robot_pose_data')
         self.joints = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch']
 
     def think(self, perception):
@@ -49,7 +46,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         
         posture = self.posture_classifier.predict(angles)[0]
 
-        return self.classes[posture]
+        return posture
 
 if __name__ == '__main__':
     agent = PostureRecognitionAgent()
