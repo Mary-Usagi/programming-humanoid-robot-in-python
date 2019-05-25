@@ -32,7 +32,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
 
     def think(self, perception):
         self.posture = self.recognize_posture(perception)
-        print self.posture
+        #print self.posture
         return super(PostureRecognitionAgent, self).think(perception)
 
     def recognize_posture(self, perception):
@@ -40,7 +40,6 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         # YOUR CODE HERE
         
         angles = []
-
         for joint in self.joints:
             angles.append(perception.joint[joint])
         

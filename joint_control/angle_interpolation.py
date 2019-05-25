@@ -35,6 +35,7 @@ class AngleInterpolationAgent(PIDAgent):
         self.start_time = 0 # start of animation
         self.last_time = 0
         self.start_joints = []
+        self.current_keyframes = ([], [], [])
 
     def think(self, perception):
         target_joints = self.angle_interpolation(self.keyframes, perception)
@@ -49,22 +50,26 @@ class AngleInterpolationAgent(PIDAgent):
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
 
-        names, times, keys = keyframes 
-
         time_change = 0
-        if self.start_time == 0:
+
+        if not keyframes[0]:
+            return target_joints
+
+        if self.start_time == 0 or not self.current_keyframes[1] == keyframes[1]:
             self.start_time = perception.time
             self.last_time = perception.time
             self.start_joints = perception.joint
+            self.current_keyframes = keyframes
+            print "new keyframe"
+            
             time_change = 0
         else:
             time_change = perception.time - self.last_time
             self.last_time = perception.time
 
-       
+        names, times, keys = self.current_keyframes
+
         relative_time = perception.time - self.start_time + time_change
-        #print relative_time
-        #print time_change
         
         done = 0
         for i in range(len(names)):
