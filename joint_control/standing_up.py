@@ -24,7 +24,6 @@ class StandingUpAgent(PostureRecognitionAgent):
             if posture == 'Belly' or posture == 'Right':
                 self.keyframes = rightBellyToStand()
                 #print "Belly"
-        self.keyframes = ([],[],[])
 
 
 class TestStandingUpAgent(StandingUpAgent):
