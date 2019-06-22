@@ -15,7 +15,6 @@ import numpy as np
 from scipy.linalg import pinv
 from math import atan2
 
-#Helpfunction from the notebook
 def from_trans(m):
     return [m[0, -1], m[1, -1], m[2, -1], atan2(m[1, 0], m[0, 0])]
 
