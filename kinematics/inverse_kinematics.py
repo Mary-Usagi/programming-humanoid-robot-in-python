@@ -28,7 +28,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         '''
         joint_angles = []
         # YOUR CODE HERE
-        
+
         lambda_ = 1
         max_step = 0.1
         joint_angles = np.random.random(len(self.chains[effector_name]))
@@ -37,7 +37,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         #Ts = [identity(len(self.chains[effector_name]))]
         for i in range(1000):
             Ts = [identity(len(self.chains[effector_name]))]
-            for k, name in enumerate(self.chains[effector_name]):
+            for name in self.chains[effector_name]:
                 Ts.append(self.transforms[name])
                 #print k
                 #print name
