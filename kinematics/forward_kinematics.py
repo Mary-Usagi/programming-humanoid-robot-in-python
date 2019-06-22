@@ -23,7 +23,9 @@ sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '
 from numpy.matlib import matrix, identity
 
 from angle_interpolation import AngleInterpolationAgent
+from keyframes import *
 
+import numpy as np
 
 class ForwardKinematicsAgent(AngleInterpolationAgent):
     def __init__(self, simspark_ip='localhost',
@@ -35,9 +37,28 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         self.transforms = {n: identity(4) for n in self.joint_names}
 
         # chains defines the name of chain and joints of the chain
-        self.chains = {'Head': ['HeadYaw', 'HeadPitch']
+        self.chains = {'Head': ['HeadYaw', 'HeadPitch'],
+                        'LArm': ['LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll'],
+                        'LLeg': ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'RAnkleRoll'],
+                        'RLeg': ['RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'RAnklePitch', 'LAnkleRoll'],
+                        'RArm': ['RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll']
                        # YOUR CODE HERE
                        }
+
+        self.offsets = {'HeadYaw': [0.0, 0.0, 126.5], 'HeadPitch': [0.0, 0.0, 0.0], 
+
+                             'LShoulderPitch': [0.0, 98.0, 100.0], 'LShoulderRoll': [0.0, 0.0 , 0.0], 
+                             'LElbowYaw': [105.0,  15.0, 0.0], 'LElbowRoll': [0.0, 0.0, 0.0], 'LWristYaw': [55.95, 0.0, 0.0], 
+
+                             'LHipYawPitch': [0.0, 50.0, -85.0], 'LHipRoll': [0.0, 0.0, 0.0], 'LHipPitch': [0.0, 0.0, 0.0], 
+                             'LKneePitch':[0.0, 0.0, -100.0], 'LAnklePitch': [0.0, 0.0,  -102.90], 'LAnkleRoll': [0.0, 0.0, 0.0], 
+
+                             'RHipYawPitch': [0.0, -50.0, -85.0], 'RHipRoll': [0.0, 0.0, 0.0],'RHipPitch': [0.0, 0.0, 0.0], 
+                             'RKneePitch': [0.0, 0.0, -100.0], 'RAnklePitch': [0.0, 0.0,  -102.90], 'RAnkleRoll': [0.0, 0.0, 0.0], 
+
+                             'RShoulderPitch': [0.0, -98.0, 100.0], 'RShoulderRoll': [0.0, 0.0, 0.0], 
+                             'RElbowYaw': [105.0, -15.0, 0.0], 'RElbowRoll': [0.0, 0.0, 0.0], 'RWristYaw': [55.95, 0.0, 0.0]
+                            }
 
     def think(self, perception):
         self.forward_kinematics(perception.joint)
@@ -54,6 +75,28 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         T = identity(4)
         # YOUR CODE HERE
 
+        sin_angle = np.sin(joint_angle)
+        cos_angle = np.cos(joint_angle)
+
+        if "Roll" in joint_name:
+            T[1:3,0:4] = np.array([[0.0, cos_angle, -sin_angle, 0.0], [0.0, sin_angle, cos_angle, 0.0]])
+        elif "Pitch" in joint_name:
+            T[0:3,0:4] = np.array([[cos_angle, 0.0, sin_angle, 0.0], [0.0, 1.0, 0.0, 0.0], [-sin_angle, 0.0, cos_angle, 0.0]])
+        elif "Yaw" in joint_name:
+            T[0:2,0:4] = np.array([[cos_angle, -sin_angle, 0.0, 0.0], [sin_angle, cos_angle, 0.0, 0.0]])
+        else:
+            print "Joint not found"
+        
+        if joint_name in self.offsets:
+            T[0,3] = self.offsets[joint_name][0]
+            T[1,3] = self.offsets[joint_name][1]
+            T[2,3] = self.offsets[joint_name][2]
+        else:
+            T[0,3] = 0
+            T[1,3] = 0
+            T[2,3] = 0
+            #if joint_name == 'RWristYaw' or joint_name == 'RAnkleRoll'  or joint_name == 'LAnkleRoll'  or joint_name == 'LWristYaw':
+            #    T[3,3] = 0
         return T
 
     def forward_kinematics(self, joints):
@@ -67,9 +110,12 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
                 angle = joints[joint]
                 Tl = self.local_trans(joint, angle)
                 # YOUR CODE HERE
-
+                T = np.dot(T, Tl)
                 self.transforms[joint] = T
+                #print joint
+                #print T
 
 if __name__ == '__main__':
     agent = ForwardKinematicsAgent()
+    #agent.keyframes = hello()
     agent.run()
