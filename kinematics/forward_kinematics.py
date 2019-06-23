@@ -114,7 +114,8 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
                 self.transforms[joint] = T
                 #print joint
                 #print T
-
+                #if joint == "LAnkleRoll":
+                #    print T
         return self.transforms
 
 if __name__ == '__main__':
