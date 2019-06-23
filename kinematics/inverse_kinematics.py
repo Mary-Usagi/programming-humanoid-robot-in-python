@@ -31,25 +31,56 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
 
         lambda_ = 1
         max_step = 0.1
-        joint_angles = np.random.random(len(self.chains[effector_name]))
+        joint_angles = np.random.random(len(self.chains[effector_name]) - 1)
+         
+
+        test_angles = {}
+        for name in self.perception.joint:
+            test_angles[name] = self.perception.joint[name]
+
+        #print self.forward_kinematics(self.perception.joint)["LAnkleRoll"]  
+        #j = 0
+        #for name in self.chains[effector_name]:
+        #    if j == len(self.chains[effector_name]) - 1:
+        #        break
+        #    test_angles[name] = self.perception.joint[name] + joint_angles[j]
+        #    j += 1
+
 
         target = np.matrix([from_trans(transform)]).T
+        print target
         #Ts = [identity(len(self.chains[effector_name]))]
         for i in range(1000):
-            Ts = [identity(len(self.chains[effector_name]))]
+            Ts = [identity(len(self.chains[effector_name]) - 1)]
+
+            k = 0
             for name in self.chains[effector_name]:
-                Ts.append(self.transforms[name])
+                if k == len(self.chains[effector_name]) - 1:
+                    break
+                test_angles[name] = joint_angles[k]
+                k += 1
+
+            #print "test angles"
+            #print test_angles
+            forward = self.forward_kinematics(test_angles)
+            #print "forward"
+            #print forward["LAnkleRoll"]
+            for name in self.chains[effector_name]:
+                #self.forward_kinematics(test_angles)
+                Ts.append(forward[name])
                 #print k
                 #print name
                 #print "Ts:", Ts
                 #print self.transforms[name]
-            	#print "Ts:", len(Ts)
+                #print "Ts:", len(Ts)
             Te = np.matrix([from_trans(Ts[-1])]).T
             #print "Te:", Te
+            #print Ts[-1]
             e = target - Te
+            #print e
             e[e > max_step] = max_step
             e[e < -max_step] = -max_step
-            T = np.matrix([from_trans(j) for j in Ts[0:-1]]).T
+            T = np.matrix([from_trans(i) for i in Ts[1:-1]]).T
             J = Te - T
             dT = Te - T
             #print "T:", T
@@ -60,13 +91,13 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
             J[2, :] = dT[0, :] # z
             #J[2, :] = dT[0, :] # z
             J[-1, :] = 1  # angular
-
+            #print "J2:", J
             d_theta = lambda_ * pinv(J) * e
             #print "d_theta: " , d_theta
             joint_angles += np.asarray(d_theta.T)[0]
             if  np.linalg.norm(d_theta) < 1e-4:
                 break
-                
+        print self.forward_kinematics(test_angles)["LAnkleRoll"]    
         return joint_angles
 
     def set_transforms(self, effector_name, transform):
@@ -83,7 +114,9 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
 
         j = 0
         for joint in self.chains[effector_name]:
-            print joint
+            if j == len(angles):
+                break
+            #print joint
             names.append(joint)
             times.append([2.0])
             keys.append([[angles[j],[3,0.0,0.0],[3,0.0,0.0]]])
@@ -97,6 +130,7 @@ if __name__ == '__main__':
     # test inverse kinematics
     T = identity(4)
     T[0,-1] = 0
-    T[1,-1] = -100
-    agent.set_transforms('RLeg', T)
+    T[1,-1] = 50
+    T[2,-1] = -287.9
+    agent.set_transforms('LLeg', T)
     agent.run()

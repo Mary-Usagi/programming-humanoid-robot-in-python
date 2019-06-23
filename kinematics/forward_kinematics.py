@@ -39,8 +39,8 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         # chains defines the name of chain and joints of the chain
         self.chains = {'Head': ['HeadYaw', 'HeadPitch'],
                         'LArm': ['LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll'],
-                        'LLeg': ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'RAnkleRoll'],
-                        'RLeg': ['RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'RAnklePitch', 'LAnkleRoll'],
+                        'LLeg': ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'LAnkleRoll'],
+                        'RLeg': ['RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'RAnklePitch', 'RAnkleRoll'],
                         'RArm': ['RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll']
                        # YOUR CODE HERE
                        }
@@ -83,7 +83,7 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         elif "Pitch" in joint_name:
             T[0:3,0:4] = np.array([[cos_angle, 0.0, sin_angle, 0.0], [0.0, 1.0, 0.0, 0.0], [-sin_angle, 0.0, cos_angle, 0.0]])
         elif "Yaw" in joint_name:
-            T[0:2,0:4] = np.array([[cos_angle, -sin_angle, 0.0, 0.0], [sin_angle, cos_angle, 0.0, 0.0]])
+            T[0:2,0:4] = np.array([[cos_angle, sin_angle, 0.0, 0.0], [-sin_angle, cos_angle, 0.0, 0.0]])
         else:
             print "Joint not found"
         
@@ -114,6 +114,8 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
                 self.transforms[joint] = T
                 #print joint
                 #print T
+
+        return self.transforms
 
 if __name__ == '__main__':
     agent = ForwardKinematicsAgent()
