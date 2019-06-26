@@ -18,24 +18,59 @@ sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '
 
 from inverse_kinematics import InverseKinematicsAgent
 
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+import xmlrpclib
+server = SimpleXMLRPCServer(("localhost", 8000))
+
+import threading
+
+print "Listening on port 8000..."
+server.register_introspection_functions()
 
 class ServerAgent(InverseKinematicsAgent):
     '''ServerAgent provides RPC service
     '''
     # YOUR CODE HERE
-    
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
-    
+        ret = False
+        print ""
+        print "==== Incoming request: get_angle ===="
+        if joint_name in self.perception.joint:
+            ret = self.perception.joint[joint_name]
+            print "Returning value \"" + str(ret) + "\" for joint "+joint_name
+        else:
+            print "\"" + joint_name + "\" is not a valid joint"
+
+        print ""
+        return "" + str(ret)
+
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
+        ret = False
+
+        real_angle = float(angle)
+
+        print ""
+        print "==== Incoming request: set_angle ===="
+        if joint_name in self.perception.joint:
+            self.target_joints[joint_name] = real_angle
+
+            print "Setting angle of joint "+ joint_name + " to " + str(real_angle)
+            ret = True
+        else:
+            print "\"" + joint_name + "\" is not a valid joint"
+
+        print ""
+        return ret
 
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
+        return self.posture
 
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
@@ -53,7 +88,33 @@ class ServerAgent(InverseKinematicsAgent):
         '''
         # YOUR CODE HERE
 
+
+def server_thread():
+    print "Waiting for connections..."
+    server.serve_forever()
+
+
 if __name__ == '__main__':
+    global agent
     agent = ServerAgent()
-    agent.run()
+
+    server.register_function(agent.get_angle, "get_angle")
+    server.register_function(agent.set_angle, "set_angle")
+    server.register_function(agent.get_posture, "get_posture")
+    server.register_function(agent.execute_keyframes, "execute_keyframes")
+    server.register_function(agent.get_transform, "get_transform")
+    server.register_function(agent.set_transform, "set_transform")
+
+    rpc_thread = threading.Thread(target=server_thread)
+    rpc_thread.start()
+    
+    try:
+        agent.run()
+    except KeyboardInterrupt:
+        print 'Interrupted'
+        rpc_thread._Thread__stop()
+        sys.exit(0)
+
+    
+
 

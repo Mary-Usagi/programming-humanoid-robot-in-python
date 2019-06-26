@@ -7,9 +7,13 @@
 '''
 
 import weakref
+import xmlrpclib
+
+robot = xmlrpclib.ServerProxy("http://localhost:8000/")
+print "connected to localhost"
 
 class PostHandler(object):
-    '''the post hander wraps function to be excuted in paralle
+    '''the post hander wraps function to be excuted in parallel
     '''
     def __init__(self, obj):
         self.proxy = weakref.proxy(obj)
@@ -60,7 +64,10 @@ class ClientAgent(object):
         # YOUR CODE HERE
 
 if __name__ == '__main__':
-    agent = ClientAgent()
+    #agent = ClientAgent()
+    print "Setting angle"
+    #print proxy.system.listMethods()
+    print robot.set_angle("LKneePitch", "15")
     # TEST CODE HERE
 
 
