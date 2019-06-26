@@ -15,7 +15,7 @@ import numpy as np
 from scipy.linalg import pinv
 from math import atan2
 from scipy.optimize import fmin
-
+import time
 
 
 
@@ -84,6 +84,24 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
             j += 1
 
         self.keyframes = (names, times, keys) # the result joint angles have to fill in
+
+
+        start_time = time.time()
+        current_time = time.time()
+
+        ended = False
+        times = self.keyframes[1]
+        while not ended:
+            time.sleep(0.05)
+            current_time = time.time()
+
+            ended = True
+            for i in range(len(times)):
+                if current_time - start_time < times[i][len(times[i]) -1]:
+                    ended = False
+            
+        self.keyframes = ([],[],[])
+
         print self.keyframes
 
 if __name__ == '__main__':

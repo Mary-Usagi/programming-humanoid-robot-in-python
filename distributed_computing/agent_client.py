@@ -69,11 +69,16 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
 
+from numpy.matlib import identity
+import numpy as np 
 if __name__ == '__main__':
     #agent = ClientAgent()
     print "Setting angle"
     #print proxy.system.listMethods()
-    print robot.get_transform("LShoulderRoll")
+    T = identity(4)
+    T[0,-1] = 0
+    T[1,-1] = 100
+    T[2,-1] = -100
+
+    print robot.set_transform("LLeg", T.tolist())
     # TEST CODE HERE
-
-

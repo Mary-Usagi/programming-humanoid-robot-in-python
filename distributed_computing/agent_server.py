@@ -44,7 +44,7 @@ class ServerAgent(InverseKinematicsAgent):
             ret = self.perception.joint[joint_name]
             print "Returning value \"", str(ret),"\" for joint",joint_name
         else:
-            print "\"", joint_name, "\" is not a valid joint"
+            print "Error: \"", joint_name, "\" is not a valid joint"
 
         print ""
         return ret
@@ -65,7 +65,7 @@ class ServerAgent(InverseKinematicsAgent):
             print "Setting angle of joint", joint_name, "to", str(real_angle)
             ret = True
         else:
-            print "\"", joint_name, "\" is not a valid joint"
+            print "Error: \"", joint_name, "\" is not a valid joint"
 
         print ""
         return ret
@@ -130,7 +130,7 @@ class ServerAgent(InverseKinematicsAgent):
             transform = self.from_trans(self.transforms[name])
             print "Returning value", transform ,"for joint "+name
         else :
-            print "\"", name, "\" is not a valid joint or has no transform"
+            print "Error: \"", name, "\" is not a valid joint or has no transform"
         print ""
 
         # convert to native python list
@@ -145,12 +145,40 @@ class ServerAgent(InverseKinematicsAgent):
         '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
+        ret = False
 
+        transform = np.array(transform)
+        print ""
+        print "==== Incoming request: set_transform ===="
+        if effector_name in self.chains:
+            print "Setting transform of", effector_name,"..."
+            print ""
+            try:
+                self.set_transforms(effector_name, transform)
+                ret = True
+            except Exception, e1:
+                e2 = sys.exc_info()[0]
+                print "Error: Couldn't set transform"
+                print "Exception:", e2, e1
+                ret = False
+            
+        else:
+            print "\"", effector_name, "\" is not a valid effector_name"
+
+        print ""
+        print "...Setting transform done"
+        print ""
+
+        return ret
+        
 
 def server_thread():
     print "Waiting for connections..."
-    server.serve_forever()
-
+    try:
+        server.serve_forever()
+    except:
+        server.server_close() 
+        return
 
 if __name__ == '__main__':
     global agent
@@ -169,12 +197,13 @@ if __name__ == '__main__':
     try:
         agent.run()
     except KeyboardInterrupt:
-        print 'Interrupted'
+        print 'Error: Interrupted'
         rpc_thread._Thread__stop()
         sys.exit(0)
-    except Exception, e:
-        print "Exception: ", e
-        print "Something went wrong. Aborting..."
+    except Exception, e1:
+        e2 = sys.exc_info()[0]
+        print "Error: Something went wrong. Aborting..."
+        print "Exception:", e2, e1
         rpc_thread._Thread__stop()
         sys.exit(0)
     
