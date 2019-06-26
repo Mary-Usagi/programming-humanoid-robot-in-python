@@ -134,6 +134,7 @@ class AngleInterpolationAgent(PIDAgent):
 
         # waits for new keyframes if done. Comment if repeating not wanted
         if done == len(names):
+            self.keyframes = ([], [], [])
             self.start_time = 0
 
         # YOUR CODE HERE
@@ -142,5 +143,5 @@ class AngleInterpolationAgent(PIDAgent):
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
-    #agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
+    agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()

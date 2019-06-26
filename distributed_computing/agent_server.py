@@ -108,7 +108,7 @@ class ServerAgent(InverseKinematicsAgent):
                 if current_time - start_time < times[i][len(times[i]) -1]:
                     ended = False
             
-        self.keyframes = ([],[],[])
+        #self.keyframes = ([],[],[])
 
         #self.keyframes = ([],[],[])
 
@@ -169,7 +169,7 @@ class ServerAgent(InverseKinematicsAgent):
             print ""
             return False
 
-        """
+        """ 
         start_time = time.time()
         current_time = time.time()
 

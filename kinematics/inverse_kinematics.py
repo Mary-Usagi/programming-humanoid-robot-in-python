@@ -15,8 +15,9 @@ import numpy as np
 from scipy.linalg import pinv
 from math import atan2
 from scipy.optimize import fmin
-import time
-import threading
+
+#import time
+#import threading
 
 
 
@@ -61,7 +62,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         result = fmin(func, joint_angles)  
         return result
 
-
+    """
     def end_transform(self, keyframes):
 
         start_time = time.time()
@@ -80,7 +81,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
 
         #print self.keyframes
         self.keyframes = ([],[],[])
-
+    """
 
     def set_transforms(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
@@ -106,8 +107,8 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
 
         self.keyframes = (names, times, keys) # the result joint angles have to fill in
 
-        transform_thread = threading.Thread(target=self.end_transform, args=[(names, times, keys)])
-        transform_thread.start()
+        #transform_thread = threading.Thread(target=self.end_transform, args=[(names, times, keys)])
+        #transform_thread.start()
         
 
 if __name__ == '__main__':

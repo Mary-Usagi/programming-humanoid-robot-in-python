@@ -146,6 +146,7 @@ if __name__ == '__main__':
     agent = ClientAgent()
     #print proxy.system.listMethods()
 
+    print "======"
     print "Current Posture:", agent.get_posture()
     print ""
 
@@ -161,7 +162,7 @@ if __name__ == '__main__':
     print ""
     print "==== Waving ===="
     agent.execute_keyframes(hello())
-
+    time.sleep(0.2)
     print ""
     print "==== Wipe forehead ===="
     agent.execute_keyframes(wipe_forehead())
@@ -178,9 +179,12 @@ if __name__ == '__main__':
 
     print "transform after:",agent.get_transform("LKneePitch")
     print ""
+    print "======"
     print "Current Posture:", agent.get_posture()
 
     print ""
     print "==== Trying to stand up ===="
     agent.execute_keyframes(leftBackToStand())
+    print ""
+    print "Done"
     # TEST CODE HERE
