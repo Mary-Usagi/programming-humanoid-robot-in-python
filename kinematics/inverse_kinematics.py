@@ -16,7 +16,7 @@ from scipy.linalg import pinv
 from math import atan2
 from scipy.optimize import fmin
 import time
-
+import threading
 
 
 
@@ -61,30 +61,8 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         result = fmin(func, joint_angles)  
         return result
 
-    def set_transforms(self, effector_name, transform):
-        '''solve the inverse kinematics and control joints use the results
-        '''
-        # YOUR CODE HERE
-        names = []
-        times = []
-        keys = []
-        self.forward_kinematics(self.perception.joint)
 
-        angles = self.inverse_kinematics(effector_name, transform)
-        print angles
-
-        j = 0
-        for joint in self.chains[effector_name]:
-            if j == len(angles):
-                break
-            #print joint
-            names.append(joint)
-            times.append([2.0])
-            keys.append([[angles[j],[3,0.0,0.0],[3,0.0,0.0]]])
-            j += 1
-
-        self.keyframes = (names, times, keys) # the result joint angles have to fill in
-
+    def end_transform(self, keyframes):
 
         start_time = time.time()
         current_time = time.time()
@@ -99,10 +77,38 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
             for i in range(len(times)):
                 if current_time - start_time < times[i][len(times[i]) -1]:
                     ended = False
-            
+
+        #print self.keyframes
         self.keyframes = ([],[],[])
 
-        print self.keyframes
+
+    def set_transforms(self, effector_name, transform):
+        '''solve the inverse kinematics and control joints use the results
+        '''
+        # YOUR CODE HERE
+        names = []
+        times = []
+        keys = []
+        self.forward_kinematics(self.perception.joint)
+
+        angles = self.inverse_kinematics(effector_name, transform)
+        #print "angles:", angles
+
+        j = 0
+        for joint in self.chains[effector_name]:
+            if j == len(angles):
+                break
+            #print joint
+            names.append(joint)
+            times.append([2.0])
+            keys.append([[angles[j],[3,0.0,0.0],[3,0.0,0.0]]])
+            j += 1
+
+        self.keyframes = (names, times, keys) # the result joint angles have to fill in
+
+        transform_thread = threading.Thread(target=self.end_transform, args=[(names, times, keys)])
+        transform_thread.start()
+        
 
 if __name__ == '__main__':
     agent = InverseKinematicsAgent()

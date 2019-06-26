@@ -131,6 +131,8 @@ class ServerAgent(InverseKinematicsAgent):
             print "Returning value", transform ,"for joint "+name
         else :
             print "Error: \"", name, "\" is not a valid joint or has no transform"
+            print ""
+            return False
         print ""
 
         # convert to native python list
@@ -160,10 +162,31 @@ class ServerAgent(InverseKinematicsAgent):
                 e2 = sys.exc_info()[0]
                 print "Error: Couldn't set transform"
                 print "Exception:", e2, e1
-                ret = False
-            
+                print ""
+                return False  
         else:
             print "\"", effector_name, "\" is not a valid effector_name"
+            print ""
+            return False
+
+        """
+        start_time = time.time()
+        current_time = time.time()
+
+        ended = False
+        times = self.keyframes[1]
+        while not ended:
+            time.sleep(0.05)
+            current_time = time.time()
+
+            ended = True
+            for i in range(len(times)):
+                if current_time - start_time < times[i][len(times[i]) -1]:
+                    ended = False
+
+        #print self.keyframes
+        self.keyframes = ([],[],[])
+        """
 
         print ""
         print "...Setting transform done"
@@ -193,7 +216,7 @@ if __name__ == '__main__':
 
     rpc_thread = threading.Thread(target=server_thread)
     rpc_thread.start()
-    
+
     try:
         agent.run()
     except KeyboardInterrupt:
