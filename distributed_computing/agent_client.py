@@ -9,8 +9,14 @@
 import weakref
 import xmlrpclib
 
+import os
+import sys
+sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'joint_control'))
+from keyframes import *
+
 robot = xmlrpclib.ServerProxy("http://localhost:8000/")
-print "connected to localhost"
+print "Connected to localhost"
+print ""
 
 class PostHandler(object):
     '''the post hander wraps function to be excuted in parallel
@@ -67,7 +73,7 @@ if __name__ == '__main__':
     #agent = ClientAgent()
     print "Setting angle"
     #print proxy.system.listMethods()
-    print robot.get_posture()
+    print robot.execute_keyframes(hello())
     # TEST CODE HERE
 
 

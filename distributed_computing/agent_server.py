@@ -12,8 +12,10 @@
 '''
 
 # add PYTHONPATH
-import os
 import sys
+import os
+import time
+
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
 from inverse_kinematics import InverseKinematicsAgent
@@ -39,9 +41,9 @@ class ServerAgent(InverseKinematicsAgent):
         print "==== Incoming request: get_angle ===="
         if joint_name in self.perception.joint:
             ret = self.perception.joint[joint_name]
-            print "Returning value \"" + str(ret) + "\" for joint "+joint_name
+            print "Returning value \"", str(ret),"\" for joint "+joint_name
         else:
-            print "\"" + joint_name + "\" is not a valid joint"
+            print "\"", joint_name, "\" is not a valid joint"
 
         print ""
         return "" + str(ret)
@@ -59,10 +61,10 @@ class ServerAgent(InverseKinematicsAgent):
         if joint_name in self.perception.joint:
             self.target_joints[joint_name] = real_angle
 
-            print "Setting angle of joint "+ joint_name + " to " + str(real_angle)
+            print "Setting angle of joint ", joint_name, " to ", str(real_angle)
             ret = True
         else:
-            print "\"" + joint_name + "\" is not a valid joint"
+            print "\"", joint_name, "\" is not a valid joint"
 
         print ""
         return ret
@@ -70,9 +72,10 @@ class ServerAgent(InverseKinematicsAgent):
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
+
         print ""
         print "==== Incoming request: get_posture ===="
-        print "Robot has posture \"" + self.posture +"\""
+        print "Robot has posture \"", self.posture,"\""
         print ""
         return str(self.posture)
 
@@ -81,6 +84,37 @@ class ServerAgent(InverseKinematicsAgent):
         e.g. return until keyframes are executed
         '''
         # YOUR CODE HERE
+        # TODO: check if keyframe is correct 
+        print ""
+        print "==== Incoming request: execute_keyframes ===="
+        print "Executing keyframes..."
+        print ""
+        self.ended = False
+
+        self.keyframes = keyframes
+
+        start_time = time.time()
+        current_time = time.time()
+
+        ended = False
+        times = keyframes[1]
+        while not ended:
+            time.sleep(0.05)
+            current_time = time.time()
+
+            ended = True
+            for i in range(len(times)):
+                if current_time - start_time < times[i][len(times[i]) -1]:
+                    ended = False
+            
+        self.keyframes = ([],[],[])
+
+        #self.keyframes = ([],[],[])
+
+        print ""
+        print "...Execution ended."
+        print ""
+        return True
 
     def get_transform(self, name):
         '''get transform with given name
@@ -118,7 +152,9 @@ if __name__ == '__main__':
         print 'Interrupted'
         rpc_thread._Thread__stop()
         sys.exit(0)
-    except:
+    except Exception, e:
+        print "Exception: ", e
+        print "Something went wrong. Aborting..."
         rpc_thread._Thread__stop()
         sys.exit(0)
     

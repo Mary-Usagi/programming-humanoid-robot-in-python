@@ -22,7 +22,7 @@
 
 from pid import PIDAgent
 from keyframes import *
-
+import copy
 
 class AngleInterpolationAgent(PIDAgent):
     def __init__(self, simspark_ip='localhost',
@@ -53,16 +53,16 @@ class AngleInterpolationAgent(PIDAgent):
         time_change = 0
 
         if not keyframes[0]:
-            return target_joints
+            return perception.joint
 
         if self.start_time == 0 or not self.current_keyframes[2] == keyframes[2]:
             print "new keyframe"
             if hasattr(self, 'posture'):
-                print self.posture
+                print "Robot posture: " + self.posture
 
             self.start_time = perception.time
             self.last_time = perception.time
-            self.start_joints = perception.joint
+            self.start_joints = copy.copy(perception.joint)
             self.current_keyframes = keyframes
             time_change = 0
         else:
