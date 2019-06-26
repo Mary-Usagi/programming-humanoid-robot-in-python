@@ -16,12 +16,14 @@ from scipy.linalg import pinv
 from math import atan2
 from scipy.optimize import fmin
 
-def from_trans(m):
-    return [m[0, -1], m[1, -1], m[2, -1], atan2(m[1, 0], m[0, 0])]
+
 
 
 
 class InverseKinematicsAgent(ForwardKinematicsAgent):
+
+    def from_trans(self,m):
+        return [m[0, -1], m[1, -1], m[2, -1], atan2(m[1, 0], m[0, 0])]
 
     def error_func(self, joint_angles, target, effector_name):
         test_angles = {}
@@ -42,7 +44,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         for name in self.chains[effector_name]:
             Ts.append(forward[name])
 
-        Te = np.matrix([from_trans(Ts[-1])]).T
+        Te = np.matrix([self.from_trans(Ts[-1])]).T
         e = target - Te
 
         return np.linalg.norm(e)
@@ -52,7 +54,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         joint_angles = np.random.random(len(self.chains[effector_name]) - 1)
 
 
-        target = np.matrix([from_trans(transform)]).T
+        target = np.matrix([self.from_trans(transform)]).T
         #target = matrix([[x_e, y_e, theta_e]]).T
         func = lambda t: self.error_func(t, target, effector_name)
 

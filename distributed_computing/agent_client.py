@@ -73,7 +73,7 @@ if __name__ == '__main__':
     #agent = ClientAgent()
     print "Setting angle"
     #print proxy.system.listMethods()
-    print robot.execute_keyframes(hello())
+    print robot.get_transform("LShoulderRoll")
     # TEST CODE HERE
 
 

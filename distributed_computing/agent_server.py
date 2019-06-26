@@ -15,6 +15,7 @@
 import sys
 import os
 import time
+import numpy as np
 
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
@@ -41,12 +42,12 @@ class ServerAgent(InverseKinematicsAgent):
         print "==== Incoming request: get_angle ===="
         if joint_name in self.perception.joint:
             ret = self.perception.joint[joint_name]
-            print "Returning value \"", str(ret),"\" for joint "+joint_name
+            print "Returning value \"", str(ret),"\" for joint",joint_name
         else:
             print "\"", joint_name, "\" is not a valid joint"
 
         print ""
-        return "" + str(ret)
+        return ret
 
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
@@ -61,7 +62,7 @@ class ServerAgent(InverseKinematicsAgent):
         if joint_name in self.perception.joint:
             self.target_joints[joint_name] = real_angle
 
-            print "Setting angle of joint ", joint_name, " to ", str(real_angle)
+            print "Setting angle of joint", joint_name, "to", str(real_angle)
             ret = True
         else:
             print "\"", joint_name, "\" is not a valid joint"
@@ -120,6 +121,25 @@ class ServerAgent(InverseKinematicsAgent):
         '''get transform with given name
         '''
         # YOUR CODE HERE
+        print ""
+        print "==== Incoming request: get_transform ===="
+        self.forward_kinematics(self.perception.joint)
+
+        transform = False
+        if name in self.transforms:
+            transform = self.from_trans(self.transforms[name])
+            print "Returning value", transform ,"for joint "+name
+        else :
+            print "\"", name, "\" is not a valid joint or has no transform"
+        print ""
+
+        # convert to native python list
+        py_transform = []
+
+        for i in range(len(transform)):
+            py_transform.append(np.float64(transform[i]).item())
+
+        return py_transform
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
