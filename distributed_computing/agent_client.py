@@ -67,7 +67,7 @@ if __name__ == '__main__':
     #agent = ClientAgent()
     print "Setting angle"
     #print proxy.system.listMethods()
-    print robot.set_angle("LKneePitch", "15")
+    print robot.get_posture()
     # TEST CODE HERE
 
 

@@ -70,7 +70,11 @@ class ServerAgent(InverseKinematicsAgent):
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
-        return self.posture
+        print ""
+        print "==== Incoming request: get_posture ===="
+        print "Robot has posture \"" + self.posture +"\""
+        print ""
+        return str(self.posture)
 
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
@@ -114,7 +118,9 @@ if __name__ == '__main__':
         print 'Interrupted'
         rpc_thread._Thread__stop()
         sys.exit(0)
-
+    except:
+        rpc_thread._Thread__stop()
+        sys.exit(0)
     
 
 
