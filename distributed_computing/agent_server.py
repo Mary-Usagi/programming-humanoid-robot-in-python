@@ -169,7 +169,7 @@ class ServerAgent(InverseKinematicsAgent):
             print ""
             return False
 
-        """ 
+         
         start_time = time.time()
         current_time = time.time()
 
@@ -185,8 +185,8 @@ class ServerAgent(InverseKinematicsAgent):
                     ended = False
 
         #print self.keyframes
-        self.keyframes = ([],[],[])
-        """
+        #self.keyframes = ([],[],[])
+        
 
         print ""
         print "...Setting transform done"

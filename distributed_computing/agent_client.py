@@ -173,8 +173,8 @@ if __name__ == '__main__':
 
     T = identity(4)
     T[0,-1] = 0
-    T[1,-1] = 100
-    T[2,-1] = -100
+    T[1,-1] = 1
+    T[2,-1] = -1
     agent.set_transform("LLeg", T)
 
     print "transform after:",agent.get_transform("LKneePitch")

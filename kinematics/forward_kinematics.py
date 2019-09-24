@@ -22,6 +22,7 @@ sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '
 
 from numpy.matlib import matrix, identity
 
+
 from recognize_posture import PostureRecognitionAgent
 from keyframes import *
 
@@ -45,19 +46,19 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
                        # YOUR CODE HERE
                        }
 
-        self.offsets = {'HeadYaw': [0.0, 0.0, 126.5], 'HeadPitch': [0.0, 0.0, 0.0], 
+        self.offsets = {'HeadYaw': [0.0, 0.0, 1.265], 'HeadPitch': [0.0, 0.0, 0.0], 
 
-                             'LShoulderPitch': [0.0, 98.0, 100.0], 'LShoulderRoll': [0.0, 0.0 , 0.0], 
-                             'LElbowYaw': [105.0,  15.0, 0.0], 'LElbowRoll': [0.0, 0.0, 0.0], 'LWristYaw': [55.95, 0.0, 0.0], 
+                             'LShoulderPitch': [0.0, 0.980, 1.000], 'LShoulderRoll': [0.0, 0.0 , 0.0], 
+                             'LElbowYaw': [1.050,  0.150, 0.0], 'LElbowRoll': [0.0, 0.0, 0.0], 'LWristYaw': [0.5595, 0.0, 0.0], 
 
-                             'LHipYawPitch': [0.0, 50.0, -85.0], 'LHipRoll': [0.0, 0.0, 0.0], 'LHipPitch': [0.0, 0.0, 0.0], 
-                             'LKneePitch':[0.0, 0.0, -100.0], 'LAnklePitch': [0.0, 0.0,  -102.90], 'LAnkleRoll': [0.0, 0.0, 0.0], 
+                             'LHipYawPitch': [0.0, 0.500, -0.850], 'LHipRoll': [0.0, 0.0, 0.0], 'LHipPitch': [0.0, 0.0, 0.0], 
+                             'LKneePitch':[0.0, 0.0, -1.000], 'LAnklePitch': [0.0, 0.0,  -1.0290], 'LAnkleRoll': [0.0, 0.0, 0.0], 
 
-                             'RHipYawPitch': [0.0, -50.0, -85.0], 'RHipRoll': [0.0, 0.0, 0.0],'RHipPitch': [0.0, 0.0, 0.0], 
-                             'RKneePitch': [0.0, 0.0, -100.0], 'RAnklePitch': [0.0, 0.0,  -102.90], 'RAnkleRoll': [0.0, 0.0, 0.0], 
+                             'RHipYawPitch': [0.0, -0.500, -0.850], 'RHipRoll': [0.0, 0.0, 0.0],'RHipPitch': [0.0, 0.0, 0.0], 
+                             'RKneePitch': [0.0, 0.0, -1.000], 'RAnklePitch': [0.0, 0.0,  -1.0290], 'RAnkleRoll': [0.0, 0.0, 0.0], 
 
-                             'RShoulderPitch': [0.0, -98.0, 100.0], 'RShoulderRoll': [0.0, 0.0, 0.0], 
-                             'RElbowYaw': [105.0, -15.0, 0.0], 'RElbowRoll': [0.0, 0.0, 0.0], 'RWristYaw': [55.95, 0.0, 0.0]
+                             'RShoulderPitch': [0.0, -0.980, 1.000], 'RShoulderRoll': [0.0, 0.0, 0.0], 
+                             'RElbowYaw': [1.050, -0.150, 0.0], 'RElbowRoll': [0.0, 0.0, 0.0], 'RWristYaw': [0.5595, 0.0, 0.0]
                             }
 
     def think(self, perception):
